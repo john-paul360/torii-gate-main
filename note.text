@@ -22,3 +22,10 @@ FEATURES
 3 file upoload 
 4 email sending
 5 crud operation
+
+REGISTRATION
+1. input validsation
+2. get the input and send to the api as a post request (axios)
+3. response - success or error
+a. redirect ot the verify page
+b. error (dsiplay error)
