@@ -12,7 +12,8 @@ import { axiosInstance } from "../utils/axiosInstance";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [role, setRole] = useState("hunter");
+  const [role, setRole] = useState("tenant");
+  const [isSubmitting, setIsSubnitting] = useState(false);
   const redirect = useNavigate();
 
   const {
@@ -24,6 +25,7 @@ const Login = () => {
   });
 
   const handleLogin = (data) => {
+    setIsSubnitting(true);
     try {
       console.log("Login Data:", { ...data, role });
     } catch (error) {
@@ -53,12 +55,13 @@ const Login = () => {
           Enter your details to sign in to your account.
         </p>
 
-        <div className="flex mt-2 justify-between items-center font-medium rounded-lg text-[16px] bg-[#F5F5F5] border border-[#d9d9d9] w-[267px] h-[38px] px-2 py-1">
+        <div className="flex mt-2 justify-between items-center font-medium rounded-lg text-[16px]
+               bg-[#F5F5F5] border border-[#d9d9d9] w-[267px] h-[38px] px-2 py-1">
           <button
             type="button"
-            onClick={() => setRole("hunter")}
+            onClick={() => setRole("tenant")}
             className={
-              role === "hunter"
+              role === "tenant"
                 ? "bg-[#0c0c0c] text-white rounded-lg  px-2 py-1"
                 : "text-[#666] bg-transparent cursor-pointer"
             }
@@ -67,9 +70,9 @@ const Login = () => {
           </button>
           <button
             type="button"
-            onClick={() => setRole("owner")}
+            onClick={() => setRole("landlord")}
             className={
-              role === "owner"
+              role === "landlord"
                 ? "bg-[#0c0c0c] text-white rounded-lg  px-2 py-1"
                 : "text-[#666] bg-transparent cursor-pointer"
             }
@@ -128,15 +131,16 @@ const Login = () => {
               <p>{errorMessage}</p>
             </div>
           )}
-          <Link className="font-medium text-sm mt-2 inline-block">
+          <Link to="/forgot-password" className="font-medium text-sm mt-2 inline-block">
             Forgot Password?
           </Link>
 
           <button
             type="submit"
+            disabled={isSubmitting}
             className="btn w-full h-[56px] rounded-lg bg-black text-white block mt-5"
           >
-            Login
+            {isSubmitting ? <span className="loading loading-spinner loading-md text-blacknpm"></span> : "Login"}
           </button>
 
           <p className="my-5 text-center text-[#666]">

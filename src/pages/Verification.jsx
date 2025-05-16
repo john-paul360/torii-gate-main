@@ -13,6 +13,7 @@ const Verification = () => {
     }
     return `${start.slice(0, 2)}...@${domain}`;
   };
+  
   return (
     <AuthWrapper>
       <div className="bg-white py-[29px] px-[26px] rounded-lg shadow-lg w-full lg:w-[453px]">
@@ -26,7 +27,7 @@ const Verification = () => {
             Verification is required to proceed
           </h1>
           <p className="text-[#666] text-[16px] font-normal">
-            A verification instruction has been sent to your{" "}
+            A verification instruction has been sent to your
             <span className="font-semibold ml-1">{maskEmail(email)}</span>
           </p>
         </div>
