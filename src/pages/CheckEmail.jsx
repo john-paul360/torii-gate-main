@@ -18,11 +18,17 @@ const CheckEmail = () => {
           </h1>
           <p className="text-[#666] text-[16px] font-[400]">
             Check the email address
-            <span className="font-[700]"> olafarid12@gmail.com </span> for instructions to
-            reset your password.
+            <span className="font-[700]"> olafarid12@gmail.com </span> for
+            instructions to reset your password.
           </p>
         </div>
-        <button className="btn w-full mt-4 font-semibold">Resend mail</button>
+        <button
+          className="btn w-full h-[56px] mt-4 font-[600] rounded-[12px] border border-[#D9D9D9]
+                       py-[12px] px-[19px] text-center text-[#000] text-[16px]"
+          type="submit"
+        >
+          Resend Email
+        </button>
       </div>
     </AuthWrapper>
   );

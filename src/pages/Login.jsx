@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { loginSchema } from "../utils/formValidator";
 import { axiosInstance } from "../utils/axiosInstance";
+import { useAppContext } from "../hooks/useAppContext";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,6 +16,7 @@ const Login = () => {
   const [role, setRole] = useState("tenant");
   const [isSubmitting, setIsSubnitting] = useState(false);
   const redirect = useNavigate();
+  const { login } = useAppContext();
 
   const {
     register,
@@ -24,12 +26,27 @@ const Login = () => {
     resolver: yupResolver(loginSchema),
   });
 
-  const handleLogin = (data) => {
+  const handleLogin = async (data) => {
     setIsSubnitting(true);
     try {
-      console.log("Login Data:", { ...data, role });
+      // console.log("Login Data:", { ...data, role });
+      const { data: mydata } = await axiosInstance.post("/auth/login", {
+        ...data,
+        role,
+      });
+      console.log(mydata);
+      login(mydata.token, mydata.user);
+      if (mydata.user.role === "tenant") {
+        redirect("/home");
+      } else {
+        redirect("/dashboard");
+      }
+      setErrorMessage("");
     } catch (error) {
       console.log(error);
+      setErrorMessage(error?.response?.data?.message || "Login failed");
+    } finally {
+      setIsSubnitting(false);
     }
   };
 
@@ -55,8 +72,10 @@ const Login = () => {
           Enter your details to sign in to your account.
         </p>
 
-        <div className="flex mt-2 justify-between items-center font-medium rounded-lg text-[16px]
-               bg-[#F5F5F5] border border-[#d9d9d9] w-[267px] h-[38px] px-2 py-1">
+        <div
+          className="flex mt-2 justify-between items-center font-medium rounded-lg text-[16px]
+               bg-[#F5F5F5] border border-[#d9d9d9] w-[267px] h-[38px] px-2 py-1"
+        >
           <button
             type="button"
             onClick={() => setRole("tenant")}
@@ -131,7 +150,10 @@ const Login = () => {
               <p>{errorMessage}</p>
             </div>
           )}
-          <Link to="/forgot-password" className="font-medium text-sm mt-2 inline-block">
+          <Link
+            to="/forgot-password"
+            className="font-medium text-sm mt-2 inline-block"
+          >
             Forgot Password?
           </Link>
 
@@ -140,7 +162,11 @@ const Login = () => {
             disabled={isSubmitting}
             className="btn w-full h-[56px] rounded-lg bg-black text-white block mt-5"
           >
-            {isSubmitting ? <span className="loading loading-spinner loading-md text-blacknpm"></span> : "Login"}
+            {isSubmitting ? (
+              <span className="loading loading-spinner loading-md text-blacknpm"></span>
+            ) : (
+              "Login"
+            )}
           </button>
 
           <p className="my-5 text-center text-[#666]">
