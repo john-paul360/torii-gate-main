@@ -9,6 +9,21 @@ const VerifyEmail = () => {
   const { token } = useParams();
   const [errorMessage, setErrorMessage] = useState("");
   const [status, setStatus] = useState("verifying");
+  const [email, setEmail] = useState("");
+  const [feedback, setFeedback] = useState("");
+
+  const handleResendEmail = async () => {
+    try {
+      const response = await axiosInstance.post("/auth/resend-email", {
+        email,
+      });
+      if (response.status === 200) {
+        setFeedback("Email sent");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const checkToken = async () => {
     try {
@@ -21,6 +36,7 @@ const VerifyEmail = () => {
     } catch (error) {
       setErrorMessage("Email verification Failed");
       setStatus("error");
+      setEmail(error?.response?.data?.email);
     }
   };
 
@@ -34,7 +50,7 @@ const VerifyEmail = () => {
         <div className="w-full max-w-[505px] py-[29px] px-[26px] shadow-md text-center">
           <BounceLoader />
           <h1 className="text-xl lg:text-[30px] font-semibold my-3">
-            Emial Verifying...
+            Email Verifying...
           </h1>
           <p className="text-[#666] text-lg"></p>
         </div>
@@ -53,8 +69,8 @@ const VerifyEmail = () => {
             Your account has been verified successfully
           </p>
           <Link to="/login">
-            <button className="w-full font-semibold rounded-xl bg-[#0c0c0c] text-white h-[56px]">
-              Procee to ligin
+            <button className="w-full font-semibold rounded-xl bg-[#0c0c0c] text-white h-[56px] max-w-[123px]">
+              Proceed to login
             </button>
           </Link>
         </div>
@@ -65,12 +81,18 @@ const VerifyEmail = () => {
     <div className="flex items-center justify-center h-screen">
       <div className="w-full max-w-[505px] py-[29px] px-[26px] shadow-md text-center">
         <MdCancel size={80} className="text-red-500 mx-auto" />
+        <p className="bg-green-100 text-green-700 py-1.5 px-3 rounded-lg">
+          {feedback}
+        </p>
         <h1 className="text-xl lg:text-[30px] font-semibold my-3">
           Verification Failed
         </h1>
         <p className="text-[#666] mb-4">Invalid or Expired Token</p>
         <Link to="/login">
-          <button className="w-full font-semibold rounded-xl bg-[#0c0c0c] text-white h-[56px]">
+          <button
+            onClick={handleResendEmail}
+            className="w-full font-semibold rounded-xl bg-[#0c0c0c] text-white h-[56px] max-w-[123px]"
+          >
             Resend verification mail
           </button>
         </Link>
