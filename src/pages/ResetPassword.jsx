@@ -6,12 +6,16 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import { PiWarningCircle } from "react-icons/pi";
 import { resetPasswordSchema } from "../utils/formValidator";
+import { useParams, useNavigate } from "react-router-dom";
 
 const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { token } = useParams();
+  const redirect = useNavigate();
+
   const {
     register,
     handleSubmit,
@@ -20,15 +24,27 @@ const ResetPassword = () => {
 
   const handleResetPassword = async (data) => {
     try {
-      console.log(data);
+      const Response = await axiosInstance.post("/auth/reset-password", {
+        token,
+        password: data.password,
+      });
+      if (Response.status === 200) {
+        redirect("/login");
+      }
     } catch (error) {
       console.log(error);
+      setErrorMessage(error?.response?.data?.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <AuthWrapper>
-      <form onSubmit={handleSubmit(handleResetPassword)} className="w-full lg:w-[505px] p-6">
+      <form
+        onSubmit={handleSubmit(handleResetPassword)}
+        className="w-full lg:w-[505px] p-6"
+      >
         <h1 className="text-3xl font-bold">Reset Password</h1>
         <p className="text-[16px] font-medium text-[#666]">
           Enter your new password
@@ -101,9 +117,9 @@ const ResetPassword = () => {
         >
           {isSubmitting ? (
             <span className="loading loading-spinner loading-md text-black"></span>
-        ) : (
+          ) : (
             "Reset Password"
-        )}
+          )}
         </button>
       </form>
     </AuthWrapper>
