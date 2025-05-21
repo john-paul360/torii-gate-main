@@ -65,7 +65,8 @@ const Register = () => {
         <p className="text-[16px] font-medium text-[#666] my-2">
           Enter your details to sign up to your account.
         </p>
-        <div className="flex mt-2 justify-between items-center font-medium rounded-lg text-[16px] bg-[#F5F5F5] border border-[#d9d9d9] w-[267px] h-[38px] px-2 py-1">
+        <div className="flex mt-2 justify-between items-center font-medium rounded-lg text-[16px] 
+        bg-[#F5F5F5] border border-[#d9d9d9] w-[267px] h-[38px] px-2 py-1">
           <button
             type="button"
             onClick={() => setRole("tenant")}
@@ -220,7 +221,7 @@ const Register = () => {
           disabled={isSubmitting}
           className="btn w-full h-[56px] rounded-lg bg-black text-white block mt-6"
         >
-          {isSubmitting ? "Registrying..." : "Register"}
+          {isSubmitting ? "Registerying..." : "Register"}
         </button>
 
         {/* Link to login */}

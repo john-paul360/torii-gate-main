@@ -7,8 +7,14 @@ import { useState } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 
+import { axiosInstance } from "../utils/axiosInstance";
+import { useNavigate } from "react-router-dom";
+import { PiWarningCircle } from "react-icons/pi";
+
 const ForgotPassword = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const redirect = useNavigate();
 
   const {
     register,
@@ -18,12 +24,23 @@ const ForgotPassword = () => {
     resolver: yupResolver(forgotPasswordSchema),
   });
 
-  const handleForgotPassword = (data) => {
+  const handleForgotPassword = async (data) => {
     setIsSubmitting(true);
     try {
+      const response = await axiosInstance.post("/auth/forgot-password", {
+        ...data,
+      });
+      if (response.status === 200) {
+        // redirect to check email
+        localStorage.setItem("email", data.email);
+        redirect("/check-email");
+      }
       console.log("Forgot Password Data:", data);
     } catch (error) {
       console.log(error);
+      setErrorMessage(error?.response?.data?.message);
+    } finally {
+      setIsSubmitting(false);
     }
     // setIsSubmitting(false);
   };
@@ -60,6 +77,12 @@ const ForgotPassword = () => {
           />
           {errors.email && (
             <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+          )}
+          {errorMessage && (
+            <div className="w-full rounded-xl py-2 my-2.5 px-4 bg-[#FF37370D] border border-[#ff3737] text-[#ff3737] flex items-center gap-3">
+              <PiWarningCircle size={22} />
+              <p>{errorMessage}</p>
+            </div>
           )}
           <button
             className=" btn font-[600] text-[16px] text-center text-[#FFFFFF]

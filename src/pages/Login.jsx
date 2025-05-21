@@ -14,7 +14,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [role, setRole] = useState("tenant");
-  const [isSubmitting, setIsSubnitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const redirect = useNavigate();
   const { login } = useAppContext();
 
@@ -27,7 +27,7 @@ const Login = () => {
   });
 
   const handleLogin = async (data) => {
-    setIsSubnitting(true);
+    setIsSubmitting(true);
     try {
       // console.log("Login Data:", { ...data, role });
       const { data: mydata } = await axiosInstance.post("/auth/login", {
@@ -46,7 +46,7 @@ const Login = () => {
       console.log(error);
       setErrorMessage(error?.response?.data?.message || "Login failed");
     } finally {
-      setIsSubnitting(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -163,7 +163,7 @@ const Login = () => {
             className="btn w-full h-[56px] rounded-lg bg-black text-white block mt-5"
           >
             {isSubmitting ? (
-              <span className="loading loading-spinner loading-md text-blacknpm"></span>
+              <span className="loading loading-spinner loading-md text-black"></span>
             ) : (
               "Login"
             )}

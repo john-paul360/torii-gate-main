@@ -7,7 +7,7 @@ import { MdCancel } from "react-icons/md";
 
 const VerifyEmail = () => {
   const { token } = useParams();
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errormessage, setErrorMessage] = useState("");
   const [status, setStatus] = useState("verifying");
   const [email, setEmail] = useState("");
   const [feedback, setFeedback] = useState("");
@@ -88,6 +88,7 @@ const VerifyEmail = () => {
           Verification Failed
         </h1>
         <p className="text-[#666] mb-4">Invalid or Expired Token</p>
+        {errormessage}
         <Link to="/login">
           <button
             onClick={handleResendEmail}
