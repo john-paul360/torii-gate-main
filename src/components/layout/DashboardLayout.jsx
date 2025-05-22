@@ -1,167 +1,197 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { FaBars, FaTimes, FaUserCircle } from "react-icons/fa";
+import { RxDashboard } from "react-icons/rx";
+import { HiOutlineHomeModern } from "react-icons/hi2";
+import { IoPersonOutline } from "react-icons/io5";
 import logo from "../../assets/logo.png";
 import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
-import { axiosInstance } from "../../utils/axiosInstance";
 import { useAppContext } from "../../hooks/useAppContext";
 
-const Nav = ({ bg }) => {
+const DashboardLayout = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const [showLogout, setShowLogout] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const { user, logout } = useAppContext();
   const redirect = useNavigate();
+
+  const { user, logout } = useAppContext();
   const handleLogout = () => {
     logout();
     redirect("/login");
   };
-  return (
-    <nav className={bg ? `${bg}` : "bg-[#00000042]"}>
-      <div className="navbar  text-white lg:h-[80px] layout">
-        <div className="navbar-start">
-          <div className="dropdown">
-            <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h8m-8 6h16"
-                />
-              </svg>
-            </div>
-            {user ? (
-              <ul
-                tabIndex={0}
-                className="menu menu-sm dropdown-content bg-black rounded-box z-1 mt-3 w-52 p-2 shadow"
-              >
-                <li>
-                  <Link to="/">Home</Link>
-                </li>
-                <li>
-                  <Link to="/about">About</Link>
-                </li>
-                <li>
-                  <Link to="/contact">Contact</Link>
-                </li>
-              </ul>
-            ) : (
-              <ul
-                tabIndex={0}
-                className="menu menu-sm dropdown-content bg-black rounded-box z-1 mt-3 w-52 p-2 shadow "
-              >
-                <li>
-                  <Link to="/">Home</Link>
-                </li>
-                <li>
-                  <Link to="/about">About</Link>
-                </li>
-                <li>
-                  <Link to="/contact">Contact</Link>
-                </li>
-                {!user && (
-                  <>
-                    <li>
-                      <Link to="/login">Explore Property</Link>
-                    </li>
-                    <li>
-                      <Link to="/login">List Properties</Link>
-                    </li>
-                  </>
-                )}
-              </ul>
-            )}
-          </div>
-          <Link to="/" className="">
-            <div className="flex gap-2 items-center">
-              <img src={logo} alt="logo" className="ml-2 lg:ml-0" />
-              <div>
-                <h2 className="font-medium text-lg hidden lg:block">
-                  Torii Gate
-                </h2>
-                <p className="italic font-normal text-[12px] hidden lg:block">
-                  Homing made easy to home
-                </p>
-              </div>
-            </div>
-          </Link>
-        </div>
-        <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1">
-            <li>
-              <Link to="/">Home</Link>
-            </li>
-            <li>
-              <Link to="/about">About</Link>
-            </li>
-            <li>
-              <Link to="/contact">Contact</Link>
-            </li>
-            {!user && (
-              <>
-                <li>
-                  <Link to="/login">Explore Property</Link>
-                </li>
-                <li>
-                  <Link to="/login">List Properties</Link>
-                </li>
-              </>
-            )}
-          </ul>
-        </div>
-        {user ? (
-          <div className="navbar-end flex items-center space-x-4 relative">
-            <div className="  flex items-center justify-center gap-2.5">
-              <img
-                src={user.profilePicture}
-                alt="pic"
-                className="rounded-full object-cover h-9 w-9"
-              />
+  const extractFirstName = (name) => {
+    // ade test
+    return name.split(" ")[0];
+  };
+  // Check screen size and toggle sidebar accordingly
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        setIsSidebarOpen(false);
+      } else {
+        setIsSidebarOpen(true);
+      }
+    };
 
+    handleResize(); // Initial check
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  return (
+    <div className="flex flex-col h-screen bg-gray-100">
+      {/* Top Navigation Bar - Mobile Menu Toggle */}
+      <nav className="md:hidden bg-black text-white py-3 px-4 flex items-center justify-between">
+        <button
+          onClick={toggleSidebar}
+          className="text-gray-600 focus:outline-none"
+        >
+          <FaBars color="#ffffff" size={20} />
+        </button>
+        <div className="flex gap-2 items-center">
+          <img src={logo} alt="logo" />
+        </div>
+      </nav>
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar */}
+        <aside
+          className={`bg-[#0c0c0c] text-white transition-all duration-300 ease-in-out 
+            ${isSidebarOpen ? "w-64" : "w-0"} 
+            ${isMobile ? "fixed inset-y-0 z-50" : "relative"}`}
+        >
+          <div
+            className={`h-full overflow-y-auto ${
+              isSidebarOpen ? "block" : "hidden"
+            }`}
+          >
+            <div className="flex lg:hidden items-center justify-end pt-2.5">
               <button
-                onClick={() => setShowLogout(!showLogout)}
-                className="cursor-pointer"
+                onClick={toggleSidebar}
+                className="mr-4 text-white focus:outline-none"
               >
-                {showLogout ? (
-                  <IoIosArrowUp size={20} />
-                ) : (
-                  <IoIosArrowDown size={20} />
-                )}
+                <FaTimes size={20} />
               </button>
             </div>
-            {showLogout && (
-              <button
-                onClick={handleLogout}
-                className="absolute btn bg-red-500 text-white top-16 right-4 z-10"
-              >
-                Logout
-              </button>
-            )}
+            <div className="p-4">
+              <div className="flex gap-2 items-center">
+                <img src={logo} alt="logo" />
+                <div>
+                  <h2 className="font-medium text-lg ">Torii Gate</h2>
+                  <p className="italic font-normal text-[12px]">
+                    Homing made easy to home
+                  </p>
+                </div>
+              </div>
+              <nav className="mt-6">
+                <ul className="flex flex-col gap-3 text-[16px]">
+                  <li className="mb-2">
+                    <NavLink
+                      to="/dashboard"
+                      className={({ isActive }) =>
+                        isActive
+                          ? " flex items-center gap-3 bg-[#363636] px-4 py-2 rounded-md"
+                          : "px-4 py-2 rounded hover:bg-gray-700 flex items-center gap-3"
+                      }
+                      end
+                    >
+                      <RxDashboard size={22} />
+                      Dashboard
+                    </NavLink>
+                  </li>
+                  <li className="mb-2">
+                    <NavLink
+                      to="property"
+                      className={({ isActive }) =>
+                        isActive
+                          ? " flex items-center gap-3 bg-[#363636] px-4 py-2 rounded-md"
+                          : "px-4 py-2 rounded hover:bg-gray-700 flex items-center gap-3"
+                      }
+                    >
+                      <HiOutlineHomeModern size={22} />
+                      Property
+                    </NavLink>
+                  </li>
+                  <li className="mb-2">
+                    <NavLink
+                      to="profile"
+                      className={({ isActive }) =>
+                        isActive
+                          ? " flex items-center gap-3 bg-[#363636] px-4 py-2 rounded-md"
+                          : "px-4 py-2 rounded hover:bg-gray-700 flex items-center gap-3"
+                      }
+                    >
+                      <IoPersonOutline size={22} />
+                      Profile
+                    </NavLink>
+                  </li>
+                </ul>
+              </nav>
+            </div>
           </div>
-        ) : (
-          <div className="navbar-end flex gap-3">
-            <Link
-              to="/login"
-              className=" bg-black py-[13px] px-[24px] text-white rounded-[10px]"
-            >
-              Log In
-            </Link>
-            <Link
-              to="/register"
-              className="py-[13px] px-[24px] text-black rounded-[10px] bg-white hidden lg:block "
-            >
-              Sign Up
-            </Link>
+        </aside>
+
+        {/* Main Content */}
+        <main className="flex-1 overflow-auto bg-gray-100">
+          {/* Top Navigation Bar - Desktop */}
+          <nav className="flex bg-white py-3 px-4 items-center justify-between sticky top-0 z-10">
+            <div>
+              <h1 className="font-light text-xl">
+                Welcome Back,{" "}
+                <span className="font-medium">
+                  {extractFirstName(user.fullName)}{" "}
+                </span>
+              </h1>
+            </div>
+            <div className="flex items-center space-x-4 relative">
+              <div className="  flex items-center justify-center gap-2.5">
+                <img
+                  src={user.profilePicture}
+                  alt="pic"
+                  className="rounded-full object-cover h-9 w-9"
+                />
+                <div>
+                  <h2 className="hidden md:block font-bold text-[14px] ">
+                    {user.fullName}
+                  </h2>
+                  <p className="hidden md:block text-[#666666] font-light">
+                    {user.email}
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowLogout(!showLogout)}
+                  className="cursor-pointer"
+                >
+                  {showLogout ? (
+                    <IoIosArrowUp size={20} />
+                  ) : (
+                    <IoIosArrowDown size={20} />
+                  )}
+                </button>
+              </div>
+              {showLogout && (
+                <button
+                  onClick={handleLogout}
+                  className="absolute btn bg-red-500 text-white top-16 right-4 z-10"
+                >
+                  Logout
+                </button>
+              )}
+            </div>
+          </nav>
+          <div className="px-4 bg-[#f6f6f6]">
+            <Outlet />
           </div>
-        )}
+        </main>
       </div>
-    </nav>
+    </div>
   );
 };
 
-export default Nav;
+export default DashboardLayout;
