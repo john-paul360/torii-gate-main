@@ -69,7 +69,7 @@ const CreateForm = () => {
           />
           {errors.title && (
             <p className="text-red-500 text-sm mt-1">
-              {errors.propertyName.message}
+              {errors.title.message}
             </p>
           )}
         </div>
