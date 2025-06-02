@@ -7,6 +7,7 @@ import EmptyTenant from "./EmptyTenant";
 
 const AllProperties = () => {
   const { isLoading, properties } = useTenantContext();
+  
   if (isLoading) {
     return <SuspenseLoader />;
   }
