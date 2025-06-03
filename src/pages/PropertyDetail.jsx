@@ -18,7 +18,7 @@ const PropertyDetail = () => {
   const [landlord, setLandlord] = useState("");
   const { token } = useAppContext();
 
-  const fetchPorpertyDetails = async () => {
+  const fetchPropertyDetails = async () => {
     setIsLoading(true);
     try {
       const { data } = await axiosInstance.get(`/property/${propertyId}`, {
@@ -36,7 +36,7 @@ const PropertyDetail = () => {
   };
 
   useEffect(() => {
-    fetchPorpertyDetails();
+    fetchPropertyDetails();
   }, [propertyId]);
 
   return (

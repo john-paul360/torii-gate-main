@@ -11,9 +11,10 @@ const Nav = ({ bg }) => {
   const { user, logout } = useAppContext();
   const redirect = useNavigate();
   const handleLogout = () => {
-    logout()
-    redirect("/login")
-  }
+    logout();
+    redirect("/login");
+  };
+
   return (
     <nav className={bg ? `${bg}` : "bg-[#00000042]"}>
       <div className="navbar  text-white lg:h-[80px] layout">
