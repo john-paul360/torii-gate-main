@@ -20,10 +20,12 @@ const DashboardLayout = () => {
     logout();
     redirect("/login");
   };
+
   const extractFirstName = (name) => {
-    // ade test
-    return name.split(" ")[0];
+    const firstName = name.split(" ");
+    return firstName[0];
   };
+
   // Check screen size and toggle sidebar accordingly
   useEffect(() => {
     const handleResize = () => {
@@ -133,7 +135,10 @@ const DashboardLayout = () => {
                     </NavLink>
                   </li>
                   <li className="mb-2">
-                    <Link to="/home" className="px-4 py-2 items-center gap-3">
+                    <Link
+                      to="/home"
+                      className="px-4 py-2 flex items-center gap-3"
+                    >
                       <PiUserSwitch size={22} />
                       Switch To Tenant
                     </Link>
@@ -152,7 +157,7 @@ const DashboardLayout = () => {
               <h1 className="font-light text-xl">
                 Welcome Back,{" "}
                 <span className="font-medium">
-                  {extractFirstName(user.fullName)}{" "}
+                  {extractFirstName(user.fullName)}
                 </span>
               </h1>
             </div>
@@ -184,8 +189,8 @@ const DashboardLayout = () => {
               </div>
               {showLogout && (
                 <button
-                  onClick={handleLogout}
                   className="absolute btn bg-red-500 text-white top-16 right-4 z-10"
+                  onClick={handleLogout}
                 >
                   Logout
                 </button>

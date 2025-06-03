@@ -4,30 +4,50 @@ import { MdOutlineBathtub } from "react-icons/md";
 import { LiaBedSolid } from "react-icons/lia";
 import { TbToolsKitchen } from "react-icons/tb";
 import { FaEllipsis } from "react-icons/fa6";
+//import the following components
+import { axiosInstance } from "../utils/axiosInstance";
+import { useAppContext } from "../hooks/useAppContext";
+import { toast } from "react-toastify";
+import { RiDeleteBin6Line } from "react-icons/ri";
 
 const AdminPropertyCard = ({
   _id,
-  image,
+  images,
   title,
   kitchen,
-  bedrooms,
-  bathrooms,
-  tag,
-  price,
-  address,
-  status,
+  bedroom,
+  toilet,
+  location,
+  availability,
 }) => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const [currentStatus, setCurrentStatus] = useState(status);
+  const [currentStatus, setCurrentStatus] = useState(availability);
+  const { token } = useAppContext();
 
   const toggleDropdown = () => {
     setShowDropdown((prev) => !prev);
   };
 
-  const handleStatusChange = (newStatus) => {
+  const handleStatusChange = async (newStatus, propertyId) => {
     setCurrentStatus(newStatus);
     setShowDropdown(false);
+
     //trigger api call here
+    try {
+      const response = await axiosInstance.patch(
+        `
+        /property/landlord/${propertyId}`,
+        {
+          availability: newStatus,
+        },
+        { headers: { Authorization: `Bearer ${token} ` } }
+      );
+      if (response.status === 200) {
+        toast.success("status updated successfully");
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const statusStyle =
@@ -39,7 +59,7 @@ const AdminPropertyCard = ({
     <div className="bg-white rounded-lg flex items-center justify-between p-2.5">
       <div className="flex items-center gap-2 relative">
         <img
-          src={image}
+          src={images[0]}
           alt={title}
           className="w-[129px] h-[102px] md:w-[80px] md:h-[74.55px] object-cover rounded-md"
         />
@@ -53,14 +73,14 @@ const AdminPropertyCard = ({
           <h1 className="font-medium text-[15px] text-[#0c0c0c]">{title}</h1>
           <p className="flex items-center gap-2 font-medium text-[#666] text-sm mb-2">
             <FaMapMarkerAlt className="hidden lg:block" />
-            {address}
+            {location}
           </p>
           <div className="flex items-center gap-[22px] text-[#363636] text-sm flex-wrap">
             <p className="flex items-center gap-2">
-              <LiaBedSolid /> {bedrooms} Beds
+              <LiaBedSolid /> {bedroom} Beds
             </p>
             <p className="flex items-center gap-2">
-              <MdOutlineBathtub /> {bathrooms} Baths
+              <MdOutlineBathtub /> {toilet} Baths
             </p>
             <p className="flex items-center gap-2">
               <TbToolsKitchen /> {kitchen} Kitchen
@@ -70,20 +90,25 @@ const AdminPropertyCard = ({
       </div>
 
       <div className="flex flex-col gap-[22px] items-end relative">
-        <button onClick={toggleDropdown} className="cursor-pointer">
-          <FaEllipsis />
-        </button>
+        <div className="flex items-center gap-2">
+          <button className="cursor-pointer">
+            <RiDeleteBin6Line />
+          </button>
+          <button onClick={toggleDropdown} className="cursor-pointer">
+            <FaEllipsis />
+          </button>
+        </div>
 
         {showDropdown && (
           <div className="absolute top-8 right-0 bg-white border rounded-md shadow-md z-10">
             <button
-              onClick={() => handleStatusChange("rented")}
+              onClick={() => handleStatusChange("rented", _id)}
               className="block w-full text-left px-4 py-2 hover:bg-gray-100"
             >
               Rented
             </button>
             <button
-              onClick={() => handleStatusChange("available")}
+              onClick={() => handleStatusChange("available", _id)}
               className="block w-full text-left px-4 py-2 hover:bg-gray-100"
             >
               Available
