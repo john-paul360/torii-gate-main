@@ -58,8 +58,10 @@ const AdminPropertyCard = ({
         { headers: { Authorization: `Bearer ${token} ` } }
       );
       if (response.status === 200) {
-        window.location.reload();
         toast.success("Property deleted successfully");
+        setTimeout(() => {
+          window.location.reload();
+        }, 3000);
       }
     } catch (error) {
       console.error(error);
