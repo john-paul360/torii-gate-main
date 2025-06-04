@@ -9,8 +9,11 @@ import { axiosInstance } from "../utils/axiosInstance";
 import { useAppContext } from "../hooks/useAppContext";
 import { useSubmit } from "react-router-dom";
 import EmptyLandlord from "../components/EmptyLandlord";
+import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const Dashboard = () => {
+  const redirect = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
@@ -20,17 +23,22 @@ const Dashboard = () => {
 
   const fetchProperties = async () => {
     try {
-      const { data } = await axiosInstance.get(
+      const response = await axiosInstance.get(
         `/property/landlord?page=${page}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
+      const { data } = response;
       setProperties(data.properties);
       setTotal(data.total);
       setPage(data.currentPage);
       setTotalPages(data.totalPages);
       setIsLoading(false);
+      if (response.status === 401) {
+        toast.warning("sesssion expired");
+        redirect("/login");
+      }
     } catch (error) {
       console.log(error);
     }

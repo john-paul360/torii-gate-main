@@ -9,8 +9,11 @@ import SuspenseLoader from "../components/SuspenseLoader";
 import { useState, useEffect } from "react";
 import { useAppContext } from "../hooks/useAppContext";
 import EmptyLandlord from "../components/EmptyLandlord";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const AdminProperty = () => {
+  const redirect = useNavigate();
   const [isLoading, SetisLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [properties, setProperties] = useState([]);
@@ -24,14 +27,13 @@ const AdminProperty = () => {
   const { token } = useAppContext();
   const fetchProperties = async () => {
     try {
-      const { data } = await axiosInstance.get(
+      const response = await axiosInstance.get(
         `/property/landlord?page=${page}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      console.log(data);
-
+      const { data } = response;
       setProperties(data.properties);
       setPage(data.currentPage);
       setTotalPages(data.totalPages);
@@ -41,6 +43,10 @@ const AdminProperty = () => {
         rented: data.rentedProperties || data.rented || 0,
       });
       SetisLoading(false);
+      if (response.status === 401) {
+        toast.warning("sesssion expired");
+        redirect("/login");
+      }
     } catch (error) {
       console.log(error);
     }
